@@ -63,8 +63,8 @@ namespace Task_7 {
         }
 
         static double Rand() {
-
-            return MRG32k3a(long.Parse(DateTime.Now.ToFileTimeUtc().ToString().Substring(12))) / m1;
+            long time = long.Parse(DateTime.Now.ToFileTimeUtc().ToString().Substring(7));
+            return MRG32k3a(time) / m1;
         }
 
         static int RandInt(int a, int b) {
