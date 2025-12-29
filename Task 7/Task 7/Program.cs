@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -25,15 +26,14 @@ namespace Task_7 {
         // constant terms for m1 and m2
         private static readonly double m1 = Math.Pow(2, 32) - 209;
         private static readonly double m2 = Math.Pow(2, 32) - 22853.0;
-        
+        static Dictionary<long,double> memoizationA = new Dictionary<long, double>();
+        static Dictionary<long, double> memoizationB = new Dictionary<long, double>();
+
         static void Main(string[] args) {
-            Console.WriteLine(MRG32k3a(0) / m1);
-            Console.WriteLine(MRG32k3a(1) / m1);
-            Console.WriteLine(MRG32k3a(10) / m1);
-            Console.WriteLine(MRG32k3a(20) / m1);
+            Console.WriteLine(Rand());
         }
 
-        static double MRG32k3a(int i) {
+        static double MRG32k3a(long i) {
             // a and b based on i
             double ai = A(i);
             double bi = B(i);
@@ -43,15 +43,33 @@ namespace Task_7 {
         }
 
         // calculation of Ai based on previous A values
-        static double A(int i) {
+        static double A(long i) {
             if (i <= 0) return 1; // base case
-            return ( (1403580.0 * A(i - 2)) - (810728.0 * A(i - 3)) ) % m1;
+            // save results to reduce calculation load on larger i values
+            if (memoizationA.ContainsKey(i)) return memoizationA[i];
+            Console.WriteLine($"A{i}");
+            memoizationA.Add(i, ((1403580.0 * A(i - 2)) - (810728.0 * A(i - 3))) % m1);
+            return memoizationA[i];
         }
 
         // calculation of Bi based on previous B values
-        static double B(int i) {
+        static double B(long i) {
             if (i <= 0) return 1; // base case
-            return ((527612.0 * B(i - 1)) - (1370589.0 * B(i - 3))) % m2;
+            // save results to reduce calculation load on larger i values
+            if (memoizationB.ContainsKey(i)) return memoizationB[i];
+            Console.WriteLine($"B{i}");
+            memoizationB.Add(i, ((527612.0 * B(i - 1)) - (1370589.0 * B(i - 3))) % m2);
+            return memoizationB[i];
+        }
+
+        static double Rand() {
+
+            return MRG32k3a(long.Parse(DateTime.Now.ToFileTimeUtc().ToString().Substring(12))) / m1;
+        }
+
+        static int RandInt(int a, int b) {
+            return 0;
+            // return Rand();
         }
     }
 }
