@@ -63,13 +63,15 @@ namespace Task_7 {
         }
 
         static double Rand() {
+            // TODO recursive => itterative
             long time = long.Parse(DateTime.Now.ToFileTimeUtc().ToString().Substring(7));
             return MRG32k3a(time) / m1;
         }
 
         static int RandInt(int a, int b) {
-            return 0;
-            // return Rand();
+            // TODO test for 0 - max or 1 - max+1
+            // range * weight[0-1] + offset
+            return (a < b)? (int)(Rand() * b-a) + a : (int)(Rand() * a - b) + b;
         }
     }
 }
