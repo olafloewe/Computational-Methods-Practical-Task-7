@@ -52,7 +52,7 @@ namespace Task_7 {
             return memoizationA[i];
         }
 
-        // calculation of Bi based on previous B values
+        // calculation of Bi based on previous B values 
         static double B(long i) {
             if (i <= 0) return 1; // base case
             // save results to reduce calculation load on larger i values
