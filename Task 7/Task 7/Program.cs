@@ -28,7 +28,7 @@ namespace Task_7 {
         private static readonly double m1 = Math.Pow(2, 32) - 209;
         private static readonly double m2 = Math.Pow(2, 32) - 22853.0;
         // storage for previous results
-        static Dictionary<long,double> memoizationA = new Dictionary<long, double>();
+        static Dictionary<long,double> memoizationA = new Dictionary<long, double>(); 
         static Dictionary<long, double> memoizationB = new Dictionary<long, double>();
 
         //
