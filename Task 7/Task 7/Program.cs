@@ -31,94 +31,67 @@ namespace Task_7 {
         private static long[] A = new long[] { 0, 0, 0 };
         private static long[] B = new long[] { 0, 0, 0 };
 
-        // storage for previous results
-        static Dictionary<long, long> memoizationA = new Dictionary<long, long>(); 
-        static Dictionary<long, long> memoizationB = new Dictionary<long, long>();
-
-        // public Thread(System.Threading.ThreadStart start, int maxStackSize);
-
         static void Main(string[] args) {
-            long time = long.Parse(DateTime.Now.ToFileTimeUtc().ToString());
 
             // new seed
+            long time = long.Parse(DateTime.Now.ToFileTimeUtc().ToString());
+
+            // write seed values into A and B
             A = new long[] { time, 0, 0 };
             B = new long[] { time, 0, 0 };
 
-            Console.WriteLine(Rand());
-            Console.ReadKey();
+            // Console.WriteLine(Rand());
             for (int i = 0; i < 100; i++) {
-                Thread.Sleep(1);
-                Console.WriteLine(Rand());
-                // Console.WriteLine(RandInt(0, 1));
-                //Console.WriteLine(RandInt(0, 10));
+                Console.WriteLine(RandInt(0, 1));
+                // Console.WriteLine(RandInt(0, 10));
             }
 
         }
 
-        
+        // true modulo to handle negative results
+        private static long mod(long x, long y) {
+            long m = x % y;
+            // result is negative, offset by modulo
+            if (m < 0) return m + Math.Abs(y);
+
+            // result is positive
+            return m;
+        }
+
         static long MRG32k3a() {
             // generates next A and B values
             long ai = NextA();
             long bi = NextB();
 
             // xi calculation
-            return (ai < bi)? ai - bi + m1 : ai - bi;
+            return (ai < bi) ? ai - bi + m1 : ai - bi;
         }
 
         // calculation of Ai based on previous A values
         static long NextA() {
-            // TODO try yield return
-            
-            A = new long[] { ((1403580 * A[1]) + (-810728 * A[2])) % m1, A[0], A[1]};
-
+            // save results
+            A = new long[] { mod(((1403580 * A[1]) + (-810728 * A[2])), m1), A[0], A[1]};
             return A[0];
-            /*
-            // base case
-            if (i <= 0) return 1;
-            
-            // save results to reduce calculation load on larger i values
-            if (memoizationA.ContainsKey(i)) return memoizationA[i];
-
-            memoizationA.Add(i, ((1403580 * Ai(i - 2)) - (810728 * Ai(i - 3))) % m1);
-            Console.WriteLine($"A{i} {memoizationA[i]}");
-            return memoizationA[i];
-            */
         }
 
         // calculation of Bi based on previous B values 
         static long NextB() {
-
-            B = new long[] { ((527612 * B[0]) - (1370589 * B[2])) % m2, B[0], B[1] };
-
+            // save results
+            B = new long[] { mod(((527612 * B[0]) - (1370589 * B[2])), m2), B[0], B[1] };
             return B[0];
-            /*
-            // base case
-            if (i <= 0) return 1;
-
-            // save results to reduce calculation load on larger i values
-            if (memoizationB.ContainsKey(i)) return memoizationB[i];
-
-            memoizationB.Add(i, ((527612 * Bi(i - 1)) - (1370589 * Bi(i - 3))) % m2);
-            Console.WriteLine($"B{i} {memoizationB[i]}");
-            return memoizationB[i];
-            */
         }
 
         static double Rand() {
-            // TODO recursive => itterative
-
-            // Console.ReadKey();
             return (double) MRG32k3a() / m1;
         }
 
 
         // FUNCTIONS TO IMPLEMENT USING Rand()
-
         static int RandInt(int a, int b) {
             // TODO test for 0 - max or 1 - max+1
             // range * weight[0-1] + offset
-            return (int)(Rand() * (a - b)) + b;
-            return (a < b) ? (int)(Rand() * (b - a)) + a : (int)(Rand() * (a - b)) + b;
+            
+            return (a < b) ? (int)(Rand() * b) + a : (int)(Rand() * a) + b;
         }
 
         static float RandFloat(float a, float b) { 
@@ -128,6 +101,7 @@ namespace Task_7 {
         static float RandElement(float[] A) { 
             return 0.0f;
         }
+
         static string RandString(int a) { 
             return "";
         } 
