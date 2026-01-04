@@ -1,24 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Timers;
-using System.Xml.Linq;
-
-/*
- 
-Design a function named Rand which implements the MRG32k3a algorithm. 
-The function should return a real value from the [0,1) interval. 
-Then, use the Rand function to design and implement the following functions:
-
-    RandInt(a, b) which returns a random integer between a and b,
-
-    RandFloat(a, b) which returns a random real number between a and b,
-
-    RandElement(A) which returns a random element from the array of real numbers A,
-
-    RandString(a) which returns a random string of lower- and upper-case letters, digits, and special symbols, of the length a.
- 
- */
 
 namespace Task_7 {
     internal class Program {
@@ -35,16 +15,58 @@ namespace Task_7 {
 
             // new seed
             long time = long.Parse(DateTime.Now.ToFileTimeUtc().ToString());
+            Console.WriteLine($"Seed: {time}");
 
             // write seed values into A and B
             A = new long[] { time, 0, 0 };
             B = new long[] { time, 0, 0 };
 
+            // TESTING
+            /*
+            // INT test
+            int[] results = new int[11];
+
+            // FLOAT test
+            List<float> results = new List<float>();
+
+            // ELEMENT test
+            float[] elements = new float[100];
+            */
+
             // Console.WriteLine(Rand());
             for (int i = 0; i < 100; i++) {
-                Console.WriteLine(RandInt(0, 1));
-                // Console.WriteLine(RandInt(0, 10));
+                // TESTING
+                /*
+                // INT test
+                results[RandInt(1, 0)]++; 
+                
+                //FLOAT test
+                results.Add(RandFloat(0.0f, 1.0f)); 
+
+                // ELEMENT test
+                elements[i] = RandFloat(0.0f, 10.0f);
+
+                // STRING test
+                Console.WriteLine(RandString(100));
+                */
             }
+
+            // TESTING
+            /*
+            // INT test
+            for (int i = 0; i < results.Length; i++) {
+                Console.WriteLine($"{i}: {results[i]}");
+            }
+
+            // FLOAT test
+            results.Sort();
+            foreach (float f in results) {
+                Console.WriteLine(f);
+            }
+
+            // ELEMENT test
+            Console.WriteLine(RandElement(elements));
+            */
 
         }
 
@@ -58,6 +80,7 @@ namespace Task_7 {
             return m;
         }
 
+        // combines generatos A and B to calculate xi
         static long MRG32k3a() {
             // generates next A and B values
             long ai = NextA();
@@ -81,29 +104,41 @@ namespace Task_7 {
             return B[0];
         }
 
+        // generate random double between 0 and 1
         static double Rand() {
             return (double) MRG32k3a() / m1;
         }
 
-
-        // FUNCTIONS TO IMPLEMENT USING Rand()
+        // generate random integer between a and b
         static int RandInt(int a, int b) {
-            // TODO test for 0 - max or 1 - max+1
-            // range * weight[0-1] + offset
-            
-            return (a < b) ? (int)(Rand() * b) + a : (int)(Rand() * a) + b;
+            return (a < b) ? (int)(Rand() * (b - a + 1)): (int)(Rand() * (a - b + 1));
         }
 
+        // generate random float between a and b
         static float RandFloat(float a, float b) { 
-            return 0.0f;
+            return (a < b) ? (float)(Rand() * (b - a)) : (float)(Rand() * (a - b));
         }
 
+        // generate random element from array A
         static float RandElement(float[] A) { 
+            if (A.Length > 0) {
+                int index = RandInt(0, A.Length - 1);
+                return A[index];
+            }
             return 0.0f;
         }
 
-        static string RandString(int a) { 
-            return "";
+        // generate a random string of length a consisting of all printable ASCII characters
+        // (with the exception of SP(space) and DEL(delete))
+        static string RandString(int a) {
+            // extended allowed characters to all ASCII printable characters
+            string allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~";
+            string result = "";
+
+            // generate string of length a
+            for (int i = 0; i < a; i++) result += allowedChars.ToCharArray()[RandInt(0, allowedChars.Length - 1)];
+
+            return result;
         } 
     }
 }
